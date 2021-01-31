@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+# Used for copying mimetype image/ and contents of mimetype text/
+# also for copying path of file or directory
+
+if [ $1 = "p" ]; then
+        echo $2/$3 | xclip -selection clipboard
+        exit 0
+fi
+
+mime_type=$(file -bi $1)
+echo $mime_type
+
+case $mime_type in
+        image/*)
+                xclip -selection clipboard -t image/png -i $1
+        ;;
+        
+        text/*)
+                xclip -selection clipbaord $1
+        ;;
+esac

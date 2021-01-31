@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+if [ -d "$1/$2" ]; then
+        tree $1/$2 | less
+else
+        less $1/$2
+fi

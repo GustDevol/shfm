@@ -412,12 +412,87 @@ main() {
                 status_line "$#"
             ;;
 
+           # copy contents of file or image to clipboard
+           Y?)
+                   cmd_run "${SHFM_CLIP:=}" "$cur"
+                   y=1 y2=1 cur=$1 
+                   redraw "$@"
+           ;;
+
+           # delete a file or a directory
+           d?)
+                   [ -d "$cur" ] &&
+                           prompt "remove directory '$cur'? " r ||
+                           prompt "remove file '$cur'? " r
+
+                   case $ans in
+                           y|Y) 
+                                [ -d "$cur" ] && 
+                                cmd_run "rm" "-r" "$cur" || 
+                                cmd_run "rm" "$cur"
+                                   ;;
+                           *) continue ;;
+                   esac
+                   set -- *
+                   y=1 y2=1 cur=$1 
+                   redraw "$@"
+            ;;
+
+            # preview a file or directory
+            w?)
+                   cmd_run "${SHFM_PREVIEW:=}" "$PWD" "$cur"
+                   y=1 y2=1 cur=$1 
+                   redraw "$@"
+            ;;
+
+            # rename a file or directory
+            r?)
+                   prompt "new name : " r
+                   cmd_run "mv" "$cur" "$ans"
+                   set -- *
+                   y=1 y2=1 cur=$1 
+                   redraw "$@"
+            ;;
+
+            # create an empty regular file
+            m?)
+                   prompt "name : " r
+                   cmd_run "touch" "$ans"
+                   set -- *
+                   y=1 y2=1 cur=$1
+                   redraw "$@"
+            ;;
+
+            # create a new directory
+            M?)
+                   prompt "name : " r
+                   cmd_run "mkdir" "$ans"
+                   set -- *
+                   y=1 y2=1 cur=$1
+                   redraw "$@"
+            ;;
+
+            # copy path of current file or directory
+            c?)
+                    cmd_run "${SHFM_CLIP:=}" p "$PWD" "$cur"
+                    y=1 y2=1 cur=$1 
+                    redraw "$@"
+            ;;
+ 
+            # copy present working directory path
+            C?)
+                    cmd_run "${SHFM_CLIP:=}" p "$PWD"
+                    y=1 y2=1 cur=$1 
+                    redraw "$@"
+            ;;
+
             q?) exit 0 ;;
 
             # handle keys which emit escape sequences
             "$esc_c"*) esc=1 ;;
                  '[1') esc=2 ;;
                     *) esc=0 ;;
+
         esac
     done
 }

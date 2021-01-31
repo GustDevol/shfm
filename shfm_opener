@@ -1,0 +1,30 @@
+#!/bin/sh -e
+#
+# open file in application based on file extension
+
+case $1 in
+        *.mp3|*.flac|*.wav)
+            mpv --no-video "$1" 1>/dev/null 2>/dev/null
+        ;;
+
+        *.mp4|*.mkv|*.webm)
+            mpv "$1" 1>/dev/null 2>/dev/null
+        ;;
+
+        *.png|*.gif|*.jpg|*.jpe|*.jpeg)
+            sxiv "$1" 1>/dev/null 2>/dev/null
+        ;;
+
+        *.html|*.htm)
+            firefox "$1" 1>/dev/null 2>/dev/null
+        ;;
+
+        *.pdf|*.ps)
+            zathura "$1" 1>/dev/null 2>/dev/null
+        ;;
+
+        # all other files
+        *)
+            "${EDITOR:=vi}" "$1"
+        ;;
+esac
